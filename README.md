@@ -1,1 +1,1 @@
-# product-management
+# product-management (상품 관리)
