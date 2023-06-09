@@ -1,0 +1,60 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '2.7.12'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+}
+
+group = 'com.notagkorea'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+
+	// Web MVC 관련
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.data:spring-data-envers'
+	//implementation 'org.springframework.boot:spring-boot-starter-security'
+	//implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1' // jwt
+
+	// Database
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	//implementation 'org.springframework.boot:spring-boot-starter-data-redis' // redis
+
+	// p6spy
+	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.8.0'
+
+	// test
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+
+	// Swagger
+	implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'
+	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '3.0.0'
+
+	// ETD
+	//implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4' // Jasypt : 보완키 암호화
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	runtimeOnly 'com.h2database:h2'
+
+}
+
+test {
+	useJUnitPlatform()
+	systemProperty "jasypt.encryptor.password", project.getProperties().get("jasypt.encryptor.password")
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
