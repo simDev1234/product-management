@@ -4,12 +4,12 @@ import com.notagkorea.productManagment.db.entity.Category;
 import com.notagkorea.productManagment.db.entity.QCategory;
 import com.notagkorea.productManagment.db.entity.QProduct;
 import com.notagkorea.productManagment.db.type.Division;
-import com.querydsl.core.types.Order;
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.dsl.PathBuilder;
+import com.notagkorea.productManagment.util.OrderSpecifierUtils;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -25,11 +25,13 @@ public class CategoryCustomRepositoryImpl implements CategoryCustomRepository{
     public long countCategoryTotalSalesAmount(String categoryCode) {
 
         QProduct product = QProduct.product;
+        QCategory category = QCategory.category;
 
         Long totalSalesAmount = jpaQueryFactory
                 .select(product.salesAmount.sum())
                 .from(product)
-                .join(product.category)
+                .join(product.category, category)
+                .fetchJoin()
                 .where(product.category.categoryCode.startsWith(categoryCode))
                 .fetchOne();
 
@@ -74,7 +76,7 @@ public class CategoryCustomRepositoryImpl implements CategoryCustomRepository{
         List<Category> categories = jpaQueryFactory
                 .selectFrom(category)
                 .where(category.division.eq(division))
-                .orderBy(getOrderSpecifier(pageable.getSort()))
+                .orderBy(OrderSpecifierUtils.of(pageable.getSort(), Category.class, "category"))
                 .offset(pageable.getPageNumber() - 1)
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -97,23 +99,12 @@ public class CategoryCustomRepositoryImpl implements CategoryCustomRepository{
                         category.division.eq(division),
                         category.categoryCode.startsWith(parentCategoryCode)
                 )
-                .orderBy(getOrderSpecifier(pageable.getSort()))
+                .orderBy(OrderSpecifierUtils.of(pageable.getSort(), Category.class, "category"))
                 .offset(pageable.getPageNumber() - 1)
                 .limit(pageable.getPageSize())
                 .fetch();
 
         return new PageImpl<>(categories, pageable, total);
-    }
-
-    private OrderSpecifier[] getOrderSpecifier(Sort sort) {
-
-        return sort.stream().map(order -> {
-            String property = order.getProperty();
-            Order direction = order.isAscending() ? Order.ASC : Order.DESC;
-            PathBuilder<Category> orderByExpression = new PathBuilder<>(Category.class, "category");
-            return new OrderSpecifier(direction, orderByExpression.get(property));
-        }).toArray(OrderSpecifier[]::new);
-
     }
 
 }

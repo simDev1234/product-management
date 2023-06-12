@@ -3,6 +3,7 @@ package com.notagkorea.productManagment.web.category.dto;
 import com.mysema.commons.lang.Assert;
 import com.notagkorea.productManagment.db.entity.Category;
 import com.notagkorea.productManagment.db.type.Division;
+import com.notagkorea.productManagment.util.KoreanString;
 import lombok.Getter;
 
 @Getter
@@ -17,7 +18,7 @@ public class AddCategoryRequest {
         Assert.isTrue(categoryCode.matches("^[0-9]{2,8}$"), "카테고리 코드는 2글자 이상 8글자 이하의 숫자여야 합니다.");
         Assert.hasText(categoryName, "카테고리명은 필수입니다.");
         this.categoryCode = categoryCode;
-        this.categoryName = categoryName;
+        this.categoryName = KoreanString.toUTF8String(categoryName);
         this.division = division;
     }
 
