@@ -39,7 +39,7 @@ public class CategoryController {
     @GetMapping("/sales")
     public ResponseEntity categoryTotalSalesAmount(@RequestParam String categoryCode){
 
-        long totalSalesAmount = 0;
+        long totalSalesAmount = categoryService.getCategoryTotalSalesAmount(categoryCode);
 
         return ResponseEntity.ok(totalSalesAmount);
     }

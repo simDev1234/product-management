@@ -5,13 +5,13 @@ import com.notagkorea.productManagment.db.entity.QCategory;
 import com.notagkorea.productManagment.db.entity.QProduct;
 import com.notagkorea.productManagment.db.type.Division;
 import com.notagkorea.productManagment.util.OrderSpecifierUtils;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.Objects;
 
@@ -30,10 +30,14 @@ public class CategoryCustomRepositoryImpl implements CategoryCustomRepository{
         Long totalSalesAmount = jpaQueryFactory
                 .select(product.salesAmount.sum())
                 .from(product)
-                .join(product.category, category)
-                .fetchJoin()
-                .where(product.category.categoryCode.startsWith(categoryCode))
-                .fetchOne();
+                .where(product.productId.in(
+                        JPAExpressions
+                                .select(product.productId)
+                                .from(product)
+                                .join(product.category, category)
+                                .where(product.category.categoryCode.startsWith(categoryCode))
+                        )
+                ).fetchOne();
 
         return Objects.isNull(totalSalesAmount) ? 0 : totalSalesAmount;
     }
