@@ -20,7 +20,7 @@ public class ProductService {
     public Page<Product> searchProducts(SearchProductsRequest request) {
 
         return productRepository.searchProductsBy(request.getCategoryCode(),
-                request.getBrand(), request.getKeyword(), request.getPageable());
+                request.getBrand(), request.getKeyword(), request.toPageable());
 
     }
 

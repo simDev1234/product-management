@@ -29,8 +29,8 @@ class ProductServiceTest {
         final String categoryCode = "";
         final String brand = "노태그";
         final String keyword = "원";
-        final Pageable pageable = PageRequest.of(1, 10, Sort.Direction.DESC, "createdAt");
-        final SearchProductsRequest request = new SearchProductsRequest(categoryCode, brand, keyword, pageable);
+        //final Pageable pageable = PageRequest.of(1, 10, Sort.Direction.DESC, "createdAt");
+        final SearchProductsRequest request = new SearchProductsRequest(categoryCode, brand, keyword);
         Page<Product> products = productService.searchProducts(request);
         String jsonString = objectMapper.writeValueAsString(products);
         System.out.println(jsonString);
