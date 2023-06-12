@@ -2,6 +2,7 @@ package com.notagkorea.productManagment.global.exception.handler;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.notagkorea.productManagment.global.exception.GeneralException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,4 +17,13 @@ public class ExceptionResponse {
     private int status;
     private String reasonOfError;
     private String errorMessage;
+
+    public static ExceptionResponse fromException(GeneralException e) {
+        return ExceptionResponse.builder()
+                .status(e.getHttpStatus().value())
+                .reasonOfError(e.getHttpStatus().getReasonPhrase())
+                .errorMessage(e.getMessage())
+                .build();
+    }
+
 }
